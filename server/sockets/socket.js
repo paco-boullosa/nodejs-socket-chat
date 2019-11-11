@@ -22,18 +22,19 @@ io.on('connection', (client) => {
         client.join(data.sala);
 
         let personas = usuarios.agregarPersona(client.id, data.nombre, data.sala);
-
         client.broadcast.to(data.sala).emit('listaPersonas', usuarios.getPersonasSala(data.sala));
-
+        client.broadcast.to(data.sala).emit('enviarMensaje', crearMensaje('Admin', `${ data.nombre } se ha unido al chat.`));
         callback(usuarios.getPersonasSala(data.sala))
     });
 
 
-    client.on('enviarMensaje', (data) => {
+    client.on('enviarMensaje', (data, callback) => {
         let persona = usuarios.getPersona(client.id);
         let mensaje = crearMensaje(persona.nombre, data.mensaje);
         // se envia solo a los usuarios de la sala. No tenemos el data.sala, pero podemos obtener la sala de 'persona.sala'
         client.broadcast.to(persona.sala).emit('enviarMensaje', mensaje);
+        callback(mensaje);
+        // al usar el callback le podemos comunicar al emisor que se ha enviado su mensaje correctamente para, por ejemplo, borrar la caja de texto en donde se escribe
     });
 
 

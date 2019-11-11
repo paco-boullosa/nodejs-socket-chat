@@ -15,12 +15,11 @@ var usuario = {
 
 
 socket.on('connect', function() {
-
     socket.emit('entrarChat', usuario, function(resp) {
-        console.log(resp);
+        renderizarUsuarios(resp);
     });
-
 });
+
 
 // escuchar
 socket.on('disconnect', function() {
@@ -33,11 +32,12 @@ socket.on('disconnect', function() {
 
 // Escuchar información
 socket.on('enviarMensaje', function(mensaje) {
-    console.log('Servidor:', mensaje);
+    renderizarMensajes(mensaje, false); // pinta el mensaje que han escrito otros usuarios  
 });
 
 socket.on('listaPersonas', function(personas) {
-    console.log(personas);
+    //se dispara cuando hay cambios en las personas conectadas
+    renderizarUsuarios(personas);
 });
 
 
